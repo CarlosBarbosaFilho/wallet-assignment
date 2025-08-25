@@ -95,9 +95,15 @@ This document provides a detailed overview of the project's architecture, includ
 ### Architecture Diagrams
 
 System Diagram (Services)
+
+![Service/Classes Diagram](https://github.com/recargapay-dev/CarlosBarbosa/blob/main/wallets-assignment/docs/Diagram.png?raw=true)
+
 This diagram illustrates the main services and their relationships within the system.
 
 ### Architectural Overview
+
+![Architecture Diagram](https://github.com/recargapay-dev/CarlosBarbosa/blob/main/wallets-assignment/docs/arch.png?raw=true)
+
 This diagram provides a high-level view of the entire system architecture.
 
 ### Architectural Components
