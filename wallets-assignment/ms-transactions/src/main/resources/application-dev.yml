@@ -1,0 +1,44 @@
+server:
+  port: 8092
+management:
+  endpoint:
+    health:
+      show-details: always
+    prometheus: true
+  endpoints:
+    web:
+      exposure:
+        include: health ,info,metrics,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+spring:
+  application:
+    name: ms-transaction
+  cloud:
+    aws:
+      region:
+        static: us-east-1
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ms-transactions
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+client:
+  url: http://localhost:8090/api/v1/wallets
+
+config:
+  url-docker-localstack: http://localhost:4566
+
+sns:
+  topic-arn-transaction: arn:aws:sns:us-east-1:000000000000:transactions

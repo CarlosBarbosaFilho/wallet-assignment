@@ -1,0 +1,34 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: api-gateway
+  main:
+    web-application-type: reactive
+
+cloud:
+  gateway:
+    routes:
+      - id: clients-service
+        uri: http://ms-clients:8081
+        predicates:
+          - Path=/api/v1/clients, /api/v1/clients/**
+        filters:
+        - StripPrefix=0
+      - id: wallets-service
+        uri: http://ms-wallets:8082
+        predicates:
+          - Path=/api/v1/wallets/**, /api/v1/wallets
+        filters:
+          - StripPrefix=0
+      - id: transactions-service
+        uri: http://ms-transactions:8083
+        predicates:
+          - Path=/api/v1/transactions/**, /api/v1/transactions
+        filters:
+          - StripPrefix=0
+
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO

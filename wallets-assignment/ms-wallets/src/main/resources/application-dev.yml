@@ -1,0 +1,35 @@
+server:
+  port: 8090
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health ,info,metrics
+spring:
+  application:
+    name: ms-wallet
+  cloud:
+    aws:
+      region:
+        static: us-east-1
+      credentials:
+        access-key: "cbgomes"
+        secret-key: "gbgomes"
+      dynamodb:
+        endpoint: http://localhost:4566
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ms-wallets
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+client:
+  url: http://localhost:8091/api/v1/clients
