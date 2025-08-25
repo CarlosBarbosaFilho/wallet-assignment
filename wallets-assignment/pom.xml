@@ -14,6 +14,7 @@
         <module>ms-transactions</module>
         <module>ms-wallets</module>
         <module>gateway</module>
+        <module>ms-notification</module>
     </modules>
 
     <properties>

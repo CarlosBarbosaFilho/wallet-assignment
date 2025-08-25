@@ -6,7 +6,7 @@ import br.com.acme.application.ports.in.ICreateClientUseCase;
 import br.com.acme.application.ports.out.ICreateClientRepository;
 import br.com.acme.application.ports.out.IFindClientByDocumentRepository;
 import br.com.acme.application.ports.out.IFindClientByEmailRepository;
-import br.com.acme.application.utils.UseCase;
+import br.com.acme.utils.UseCase;
 import lombok.AllArgsConstructor;
 
 import static br.com.acme.application.domain.ClientDomain.createClient;

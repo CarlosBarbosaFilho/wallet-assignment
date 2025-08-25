@@ -6,7 +6,7 @@ import br.com.acme.adapters.input.api.ClientsResources;
 import br.com.acme.adapters.input.requests.ClientRequest;
 import br.com.acme.adapters.input.response.ClientResponse;
 import br.com.acme.application.domain.ClientDomain;
-import br.com.acme.application.utils.Utils;
+import br.com.acme.utils.Utils;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
 
