@@ -2,12 +2,15 @@
 
 set -e
 
-echo "🚀 Limpando e construindo todos os módulos Maven..."
+CONFIG_FILE="docker-compose-dev.yml"
+
+echo "🚀 Clear and build all maven modules."
 mvn clean install -DskipTests
 
-echo "🚀 Finalizando todos os serviços..."
-docker compose down -v
+echo "🚀 Ending all services"
+docker compose -f "$CONFIG_FILE" down -v
 
-echo "🐳 Subindo todos os serviços com Docker Compose..."
-docker compose -f docker-compose-dev.yml up -d --build
+echo "🐳 Up all services with Docker Compose..."
+docker compose -f "$CONFIG_FILE" up -d --build
 
+echo "✅ Environment docker initializer successfully"

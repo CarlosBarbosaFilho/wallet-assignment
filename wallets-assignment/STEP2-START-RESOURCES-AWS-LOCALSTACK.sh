@@ -30,7 +30,6 @@ aws sqs set-queue-attributes \
     --attributes '{"RedrivePolicy":"{\"deadLetterTargetArn\":\"arn:aws:sqs:us-east-1:000000000000:transactions-wallets-dlq\",\"maxReceiveCount\":\"3\"}"}' \
     --endpoint-url=http://localhost:4566 --region us-east-1
 
-
 ## create cloudwatch logs
 aws --endpoint-url=http://localhost:4566 logs create-log-group --log-group-name ms-transactions-logs --region us-east-1
 aws --endpoint-url=http://localhost:4566 logs create-log-stream --log-group-name ms-transactions-logs --log-stream-name transactions-stream --region us-east-1

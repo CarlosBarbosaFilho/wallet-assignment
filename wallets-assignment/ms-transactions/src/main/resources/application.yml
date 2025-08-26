@@ -15,16 +15,24 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:
         format_sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-
+  kafka:
+    bootstrap-servers: kafka:29092
+    consumer:
+      group-id: products-group
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 client:
   url: http://ms-wallets:8082/api/v1/wallets
 config:
   url-docker-localstack: http://localstack:4566
 sns:
   topic-arn-transaction: arn:aws:sns:us-east-1:000000000000:transactions
+event:
+  topic: events-wallets-transaction

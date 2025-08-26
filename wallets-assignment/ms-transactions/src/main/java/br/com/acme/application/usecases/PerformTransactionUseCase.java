@@ -6,11 +6,8 @@ import br.com.acme.application.domain.StatusTransaction;
 import br.com.acme.application.domain.BalanceStatus;
 import br.com.acme.application.domain.model.TransactionDomain;
 import br.com.acme.application.exceptions.InsufficientBalanceException;
-import br.com.acme.application.ports.out.ICheckBalanceWalletRepository;
-import br.com.acme.application.ports.out.IPerformDepositTransactionRepository;
+import br.com.acme.application.ports.out.*;
 import br.com.acme.application.ports.in.IPerformTransactionUseCase;
-import br.com.acme.application.ports.out.IPerformTransferTransactionRepository;
-import br.com.acme.application.ports.out.IPerformWithdrawTransactionRepository;
 import br.com.acme.utils.UseCase;
 import lombok.AllArgsConstructor;
 
@@ -21,6 +18,8 @@ import java.time.LocalDateTime;
 public class PerformTransactionUseCase implements IPerformTransactionUseCase {
 
     private final TransactionRepository transactionRepository;
+
+    private final IProducerEventsWalletTransaction producerEventsWalletTransaction;
 
     private final NotificationTransactionsClient notificationService;
     private final ICheckBalanceWalletRepository checkBalanceWalletRepository;
@@ -119,9 +118,11 @@ public class PerformTransactionUseCase implements IPerformTransactionUseCase {
         var completedEntity = transactionRepository.save(TransactionDomain.toEntityCompleted(transactionDomain));
         var completedDomain = TransactionDomain.fromEntity(completedEntity);
         notificationService.sendNotificationTransaction(completedDomain);
+        this.producerEventsWalletTransaction.sendEventWalletTransaction(completedDomain);
 
         transactionDomain.setStatusTransaction(completedDomain.getStatusTransaction());
         transactionDomain.setCodeTransaction(completedDomain.getCodeTransaction());
+
     }
 
     private void starterTransaction(TransactionDomain transactionDomain) {
