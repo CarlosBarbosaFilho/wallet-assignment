@@ -19,12 +19,16 @@ ModelMapper: Version 3.1.1
 PostgreSQL: Databases
 Docker: Version 27.3.1
 
+## Visualization and Tools
+If you want to visually access your infrastructure and databases, follow the instructions below:
+
+*  PGAdmin: Access port 8888. Use postgres as the user and postgres as the password. Create a server with the container name wallet-bank (for the HML environment) or wallet-bank-dev (for the DEV environment). This will give you access to the ms-transactions and ms-wallets databases.
+*  LocalStack: With the containers running, go to https://app.localstack.cloud/sign-in and log in with the necessary credentials. LocalStack will automatically connect to your host, and you will have access to all resources in use and available.
+
 ## Architectural Design
 The project employs a Hexagonal Architecture (also known as Ports and Adapters).
 
 This architecture was chosen to protect the core business logic, making it independent of external technologies. This results in a more robust, testable, and evolvable software. It helps build sustainable, high-quality projects over the long term by separating the core domain from external concerns like databases, frameworks, and APIs.
-
-## Developed Services and Rationale
 
 1. Microservice ms-wallets
    This service was developed to store and protect the domain logic related to the Wallet product. Its internal responsibilities are exclusive to wallet management, but it provides the necessary services to activate its internal requirements, which are the functionalities related to its domain.
