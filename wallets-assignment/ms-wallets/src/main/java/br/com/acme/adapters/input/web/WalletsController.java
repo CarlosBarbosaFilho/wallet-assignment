@@ -3,9 +3,9 @@ package br.com.acme.adapters.input.web;
 import br.com.acme.adapters.input.resources.WalletsResource;
 import br.com.acme.adapters.input.resources.request.WalletRequest;
 import br.com.acme.adapters.input.resources.response.WalletResponse;
-import br.com.acme.domain.WalletDomain;
-import br.com.acme.domain.WalletStatus;
-import br.com.acme.usecases.*;
+import br.com.acme.application.domain.model.WalletDomain;
+import br.com.acme.application.domain.WalletStatus;
+import br.com.acme.application.ports.in.*;
 import br.com.acme.utils.Utils;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,12 +18,12 @@ import java.time.LocalDateTime;
 public class WalletsController implements WalletsResource {
 
     private final Utils utils;
-    private final ICreateWalletService createWalletService;
-    private final ICheckBalanceWalletService checkBalanceWalletService;
-    private final IGetWalletByClientDocumentService getWalletByClientDocumentService;
-    private final IPerformDepositWalletService performDepositWalletService;
-    private final IPerformWithdrawWalletService performWithdrawWalletService;
-    private final IPerformTransferWalletService performTransferWalletService;
+    private final ICreateWalletUseCase createWalletService;
+    private final ICheckBalanceWalletUseCase checkBalanceWalletService;
+    private final IGetWalletByClientDocumentUseCase getWalletByClientDocumentService;
+    private final IPerformDepositWalletUseCase performDepositWalletService;
+    private final IPerformWithdrawWalletUseCase performWithdrawWalletService;
+    private final IPerformTransferWalletUseCase performTransferWalletService;
 
     @Override
     public WalletResponse create(WalletRequest request) {
@@ -38,7 +38,7 @@ public class WalletsController implements WalletsResource {
 
     @Override
     public BigDecimal checkBalanceDocumentClient(String document) {
-        return this.getWalletByClientDocumentService.getWalletByClientDocument(document);
+        return this.getWalletByClientDocumentService.getBalanceWalletByClientDocument(document);
     }
 
     @Override

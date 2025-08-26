@@ -5,9 +5,9 @@ set -e
 echo "🚀 Limpando e construindo todos os módulos Maven..."
 mvn clean install -DskipTests
 
-echo "🚀 FInalizando todos os serviços..."
+echo "🚀 Finalizando todos os serviços..."
 docker compose down -v
 
 echo "🐳 Subindo todos os serviços com Docker Compose..."
-#docker compose up -d --build
-docker compose -f docker-compose-hml.yml up -d --build
+docker compose -f docker-compose-dev.yml up -d --build
+

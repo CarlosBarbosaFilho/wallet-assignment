@@ -1,0 +1,59 @@
+services:
+
+  ## Postgres Databases
+  postgres:
+    image: postgres:17.5
+    container_name: wallet-bank-dev
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    ports:
+      - 5432:5432
+    networks:
+      - local-network
+
+  ## PG Admin
+  pgadmin:
+    image: dpage/pgadmin4:9.5
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: carlos@viaresults.com.br
+      PGADMIN_DEFAULT_PASSWORD: cbgomes
+    ports:
+      - 8888:80
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - local-network
+
+  ## LocalStack
+  localstack:
+    image: localstack/localstack:3
+    container_name: localstack-wallet-assignment
+    environment:
+      SERVICES: sns,sqs,s3,lambda,dynamodb,apigateway,cloudwatch,logs,ec2,ses
+      LOCALSTACK_API_GATEWAY_FORCE_HTTP1: true
+      DEBUG: 1
+      LOCALSTACK_API_KEY: ${LOCALSTACK_API_KEY-}
+      EDGE_PORT: 4566
+      AWS_DEFAULT_REGION: us-east-1
+    ports:
+      - "4566:4566"   # Endpoint principal
+      - "4510-4559:4510-4559"
+    volumes:
+      - localstack_data:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - local-network
+
+volumes:
+  postgres-data:
+  pgadmin-data:
+  localstack_data:
+networks:
+  local-network:
+    driver: bridge

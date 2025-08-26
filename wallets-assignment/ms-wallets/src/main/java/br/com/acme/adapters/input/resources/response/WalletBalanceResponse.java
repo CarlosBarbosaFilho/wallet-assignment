@@ -1,7 +1,7 @@
 package br.com.acme.adapters.input.resources.response;
 
 
-import br.com.acme.domain.WalletType;
+import br.com.acme.application.domain.WalletType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package br.com.acme.adapters.input.resources.request;
 
-import br.com.acme.domain.WalletType;
+import br.com.acme.application.domain.WalletType;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

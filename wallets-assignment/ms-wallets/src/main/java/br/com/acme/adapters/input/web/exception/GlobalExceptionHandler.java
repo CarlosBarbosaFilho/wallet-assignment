@@ -1,8 +1,8 @@
 package br.com.acme.adapters.input.web.exception;
 
 import br.com.acme.adapters.input.web.exception.response.ErrorResponse;
-import br.com.acme.usecases.exception.BusinessException;
-import br.com.acme.usecases.exception.WalletNotFoundException;
+import br.com.acme.application.exception.BusinessException;
+import br.com.acme.application.exception.WalletNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
