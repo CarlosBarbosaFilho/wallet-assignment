@@ -6,6 +6,7 @@ import br.com.acme.application.domain.StatusTransaction;
 import br.com.acme.application.domain.BalanceStatus;
 import br.com.acme.application.domain.model.TransactionDomain;
 import br.com.acme.application.exceptions.InsufficientBalanceException;
+import br.com.acme.application.exceptions.WalletSourceEqualsWalletDestinationException;
 import br.com.acme.application.ports.out.*;
 import br.com.acme.application.ports.in.IPerformTransactionUseCase;
 import br.com.acme.utils.UseCase;
@@ -74,6 +75,11 @@ public class PerformTransactionUseCase implements IPerformTransactionUseCase {
     }
 
     private void handleTransfer(TransactionDomain transactionDomain) {
+
+        if (validWalletsInTransaction(transactionDomain)) {
+            throw new WalletSourceEqualsWalletDestinationException("The source wallet is the same as the destination wallet");
+        }
+
         validateBalance(transactionDomain);
         starterTransaction(transactionDomain);
 
@@ -131,5 +137,9 @@ public class PerformTransactionUseCase implements IPerformTransactionUseCase {
         transactionDomain.setCurrentBalanceSourceWallet(actualBalanceWalletSource);
         transactionDomain.setCurrentBalanceDestinationWallet(actualBalanceWalletDestination);
 
+    }
+
+    private Boolean validWalletsInTransaction(TransactionDomain transactionDomain){
+        return transactionDomain.getSourceWallet().equalsIgnoreCase(transactionDomain.getDestinationWallet());
     }
 }

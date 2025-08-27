@@ -3,6 +3,7 @@ package br.com.acme.adapters.input.controller.exception;
 import br.com.acme.adapters.input.controller.exception.response.ErrorResponse;
 import br.com.acme.application.exceptions.BusinessException;
 import br.com.acme.application.exceptions.InsufficientBalanceException;
+import br.com.acme.application.exceptions.WalletSourceEqualsWalletDestinationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,6 +19,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InsufficientBalanceException.class)
     public ResponseEntity<String> handleInsufficientBalanceException(InsufficientBalanceException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(WalletSourceEqualsWalletDestinationException.class)
+    public ResponseEntity<String> handleIWalletSourceEqualsWalletDestinationException(WalletSourceEqualsWalletDestinationException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
