@@ -4,6 +4,7 @@ import br.com.acme.adapters.output.sns.NotificationTransactionsClient;
 import br.com.acme.adapters.output.database.repository.TransactionRepository;
 import br.com.acme.application.domain.StatusTransaction;
 import br.com.acme.application.domain.BalanceStatus;
+import br.com.acme.application.domain.TypeTransaction;
 import br.com.acme.application.domain.model.TransactionDomain;
 import br.com.acme.application.exceptions.InsufficientBalanceException;
 import br.com.acme.application.exceptions.WalletSourceEqualsWalletDestinationException;
@@ -140,6 +141,7 @@ public class PerformTransactionUseCase implements IPerformTransactionUseCase {
     }
 
     private Boolean validWalletsInTransaction(TransactionDomain transactionDomain){
-        return transactionDomain.getSourceWallet().equalsIgnoreCase(transactionDomain.getDestinationWallet());
+        return (transactionDomain.getTypeTransaction().equals(TypeTransaction.TRANSFER ) &&
+                (transactionDomain.getSourceWallet().equalsIgnoreCase(transactionDomain.getDestinationWallet()));
     }
 }
