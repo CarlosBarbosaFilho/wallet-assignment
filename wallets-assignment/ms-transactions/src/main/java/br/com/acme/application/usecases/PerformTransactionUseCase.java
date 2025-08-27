@@ -1,23 +1,30 @@
 package br.com.acme.application.usecases;
 
+import br.com.acme.adapters.output.kafka.producer.WalletsTransactionEvent;
 import br.com.acme.adapters.output.sns.NotificationTransactionsClient;
 import br.com.acme.adapters.output.database.repository.TransactionRepository;
 import br.com.acme.application.domain.StatusTransaction;
 import br.com.acme.application.domain.BalanceStatus;
 import br.com.acme.application.domain.model.TransactionDomain;
 import br.com.acme.application.exceptions.InsufficientBalanceException;
+import br.com.acme.application.exceptions.WalletDestinationEqualsWalletSource;
 import br.com.acme.application.ports.out.*;
 import br.com.acme.application.ports.in.IPerformTransactionUseCase;
 import br.com.acme.utils.UseCase;
 import lombok.AllArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @UseCase
 @AllArgsConstructor
 public class PerformTransactionUseCase implements IPerformTransactionUseCase {
 
+
+
     private final TransactionRepository transactionRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     private final IProducerEventsWalletTransaction producerEventsWalletTransaction;
 
@@ -30,8 +37,6 @@ public class PerformTransactionUseCase implements IPerformTransactionUseCase {
 
     @Override
     public TransactionDomain createTransaction(TransactionDomain transactionDomain) {
-
-        transactionDomain.setStatusTransaction(StatusTransaction.PENDING);
         transactionDomain.setCreatedAt(LocalDateTime.now().withNano(0));
 
         switch (transactionDomain.getTypeTransaction()) {
@@ -51,7 +56,7 @@ public class PerformTransactionUseCase implements IPerformTransactionUseCase {
         transactionDomain.setCodeTransaction(pendingEntity.getCodeTransaction());
         notificationService.sendNotificationTransaction(transactionDomain);
 
-        performDepositTransactionService.performDeposit(
+        var result = performDepositTransactionService.performDeposit(
                 pendingEntity.getDestinationWallet(),
                 pendingEntity.getAmountTransaction()
         );
@@ -70,10 +75,16 @@ public class PerformTransactionUseCase implements IPerformTransactionUseCase {
                 transactionDomain.getSourceWallet(),
                 transactionDomain.getAmountTransaction()
         );
-        completeTransaction(transactionDomain);
+
+            completeTransaction(transactionDomain);
     }
 
     private void handleTransfer(TransactionDomain transactionDomain) {
+
+        if (validWalletsInTransaction(transactionDomain)){
+            throw new WalletDestinationEqualsWalletSource("The source wallet is the same as the destination wallet");
+        }
+
         validateBalance(transactionDomain);
         starterTransaction(transactionDomain);
 
@@ -130,6 +141,9 @@ public class PerformTransactionUseCase implements IPerformTransactionUseCase {
         var actualBalanceWalletDestination = this.checkBalanceWalletRepository.checkBalanceWallet(transactionDomain.getDestinationWallet());
         transactionDomain.setCurrentBalanceSourceWallet(actualBalanceWalletSource);
         transactionDomain.setCurrentBalanceDestinationWallet(actualBalanceWalletDestination);
+    }
 
+    private Boolean validWalletsInTransaction(TransactionDomain transactionDomain) {
+        return transactionDomain.getSourceWallet().equalsIgnoreCase(transactionDomain.getDestinationWallet());
     }
 }

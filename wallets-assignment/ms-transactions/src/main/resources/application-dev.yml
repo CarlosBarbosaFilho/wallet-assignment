@@ -45,6 +45,10 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
+  data:
+    redis:
+      url: redis://localhost:6379
+
 event:
   topic: events-wallets-transaction
 
