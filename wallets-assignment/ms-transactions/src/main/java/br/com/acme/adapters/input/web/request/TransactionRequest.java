@@ -17,10 +17,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class TransactionRequest {
 
-    @NotBlank(message = "Field sourceWallet is required")
     private String sourceWallet;
 
-    @NotBlank(message = "Field destinationWallet is required")
     private String destinationWallet;
 
     @NotNull(message = "Field amountTransaction is required")
