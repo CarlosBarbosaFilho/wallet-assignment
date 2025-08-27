@@ -142,6 +142,6 @@ public class PerformTransactionUseCase implements IPerformTransactionUseCase {
 
     private Boolean validWalletsInTransaction(TransactionDomain transactionDomain){
         return (transactionDomain.getTypeTransaction().equals(TypeTransaction.TRANSFER ) &&
-                (transactionDomain.getSourceWallet().equalsIgnoreCase(transactionDomain.getDestinationWallet()));
+                (transactionDomain.getSourceWallet().equalsIgnoreCase(transactionDomain.getDestinationWallet())));
     }
 }
