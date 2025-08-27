@@ -24,6 +24,7 @@ If you want to visually access your infrastructure and databases, follow the ins
 
 *  PGAdmin: Access port 8888. Use postgres as the user and postgres as the password. Create a server with the container name wallet-bank (for the HML environment) or wallet-bank-dev (for the DEV environment). This will give you access to the ms-transactions and ms-wallets databases.
 *  LocalStack: With the containers running, go to https://app.localstack.cloud/sign-in and log in with the necessary credentials. LocalStack will automatically connect to your host, and you will have access to all resources in use and available.
+*  Kafka UI: http://localhost:8089/, see all topics and created messages
 
 ## Architectural Design
 The project employs a Hexagonal Architecture (also known as Ports and Adapters).

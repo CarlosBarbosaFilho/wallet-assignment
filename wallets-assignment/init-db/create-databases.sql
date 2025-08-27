@@ -4,3 +4,5 @@ DROP DATABASE IF EXISTS "ms-transactions";
 
 CREATE DATABASE "ms-wallets";
 CREATE DATABASE "ms-transactions";
+
+
