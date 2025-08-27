@@ -1,7 +1,7 @@
 package br.com.acme.adapters.input.controller;
 
 import br.com.acme.adapters.input.web.api.TransactionResource;
-import br.com.acme.adapters.input.web.request.TransactionRequest;
+import br.com.acme.adapters.input.web.request.TransactionTransferRequest;
 import br.com.acme.adapters.input.web.response.BalanceWalletInstant;
 import br.com.acme.adapters.input.web.response.BalanceWalletResponse;
 import br.com.acme.adapters.input.web.response.TransactionConfirmedResponse;
@@ -12,7 +12,6 @@ import br.com.acme.application.ports.in.IGetBalanceWalletInstantPassUseCase;
 import br.com.acme.application.ports.in.IGetTransactionsByPeriodUseCase;
 import br.com.acme.application.ports.in.IPerformTransactionUseCase;
 import br.com.acme.application.ports.out.*;
-import br.com.acme.application.usecases.CloudWatchLogService;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -53,7 +52,7 @@ public class TransactionController implements TransactionResource {
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TransactionConfirmedResponse performTransaction(@Valid @RequestBody TransactionRequest request) {
+    public TransactionConfirmedResponse performTransaction(@Valid @RequestBody TransactionTransferRequest request) {
 
         var domain = (TransactionDomain) this.converterMapper.convertObject(request, TransactionDomain.class);
         this.createLogsCloudWatch.sendLog("Controller Layer -> Perform Transaction :: " + request);

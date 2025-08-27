@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.math.BigDecimal;
 
 @FeignClient(name = "checkWalletBalanceClientByDocument", url = "${client.url}")
-public interface CheckWalletBalanceClientByDocument {
+public interface CheckWalletBalanceByDocumentClient {
 
     @GetMapping(value = "/check-balance", consumes = "application/json", produces = "application/json")
     BigDecimal checkWalletBalance(@RequestParam("walletNumber") String walletNumber);

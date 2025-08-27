@@ -1,6 +1,6 @@
 package br.com.acme.adapters.input.web.api;
 
-import br.com.acme.adapters.input.web.request.TransactionRequest;
+import br.com.acme.adapters.input.web.request.TransactionTransferRequest;
 import br.com.acme.adapters.input.web.response.BalanceWalletInstant;
 import br.com.acme.adapters.input.web.response.BalanceWalletResponse;
 import br.com.acme.adapters.input.web.response.TransactionConfirmedResponse;
@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface TransactionResource {
 
-    TransactionConfirmedResponse performTransaction(TransactionRequest request);
+    TransactionConfirmedResponse performTransaction(TransactionTransferRequest request);
 
     BalanceWalletInstant balanceWalletPass(String walletNumber, LocalDateTime datePass);
 

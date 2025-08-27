@@ -8,6 +8,7 @@ import br.com.acme.application.domain.WalletStatus;
 import br.com.acme.application.ports.in.*;
 import br.com.acme.utils.Utils;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
@@ -24,6 +25,7 @@ public class WalletsController implements WalletsResource {
     private final IPerformDepositWalletUseCase performDepositWalletService;
     private final IPerformWithdrawWalletUseCase performWithdrawWalletService;
     private final IPerformTransferWalletUseCase performTransferWalletService;
+    private final IGetWalletByNumber getWalletByNumber;
 
     @Override
     public WalletResponse create(WalletRequest request) {
@@ -54,6 +56,11 @@ public class WalletsController implements WalletsResource {
     @Override
     public String performTransfer(String walletSource, String walletDestination, BigDecimal amount) {
         return performTransferWalletService.performTransfer(walletSource, walletDestination, amount);
+    }
+
+    @Override
+    public ResponseEntity<WalletResponse> findWalletByWalletNumber(String walletNumber) {
+        return null;
     }
 
     private WalletDomain walletDomain(WalletRequest walletRequest) {

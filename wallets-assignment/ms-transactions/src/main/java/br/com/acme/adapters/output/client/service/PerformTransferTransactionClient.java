@@ -1,4 +1,4 @@
-package br.com.acme.adapters.output.database.service;
+package br.com.acme.adapters.output.client.service;
 
 import br.com.acme.adapters.output.client.PerformTransferWalletClient;
 import br.com.acme.application.exceptions.FailedPerformedTransactionException;
@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 
 @Service
 @AllArgsConstructor
-public class PerformTransferTransactionRepository implements IPerformTransferTransactionRepository {
+public class PerformTransferTransactionClient implements IPerformTransferTransactionRepository {
 
     private final CreateLogsCloudWatch createLogsCloudWatch;
     private final PerformTransferWalletClient performTransferWalletClient;
