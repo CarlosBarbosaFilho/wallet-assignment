@@ -1,0 +1,15 @@
+server:
+  port: 8095
+
+spring:
+  application:
+    name: ms-notification
+  cloud:
+    aws:
+      region:
+        static: us-east-1
+      credentials:
+        access-key: cbgomes
+        secret-key: cbgomes
+      sqs:
+        endpoint: http://localhost:4566

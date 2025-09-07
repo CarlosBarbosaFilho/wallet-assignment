@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -17,7 +18,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransactionDomain {
+public class TransactionDomain implements Serializable {
 
     private Long id;
     private String sourceWallet;
@@ -77,7 +78,7 @@ public class TransactionDomain {
                 .amountTransaction(transactionDomain.amountTransaction)
                 .typeTransaction(transactionDomain.typeTransaction)
                 .statusTransaction(StatusTransaction.COMPLETED)
-                .codeTransaction(transactionDomain.codeTransaction)
+                .codeTransaction(UUID.randomUUID())
                 .createdAt(transactionDomain.createdAt)
                 .currentBalanceDestinationWallet(transactionDomain.currentBalanceDestinationWallet)
                 .currentBalanceSourceWallet(transactionDomain.currentBalanceSourceWallet)
@@ -93,7 +94,7 @@ public class TransactionDomain {
                 .amountTransaction(transactionDomain.amountTransaction)
                 .typeTransaction(transactionDomain.typeTransaction)
                 .statusTransaction(StatusTransaction.FAILED)
-                .codeTransaction(transactionDomain.codeTransaction)
+                .codeTransaction(UUID.randomUUID())
                 .createdAt(transactionDomain.createdAt)
                 .build();
     }

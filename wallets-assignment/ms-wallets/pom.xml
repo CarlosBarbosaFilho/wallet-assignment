@@ -47,6 +47,11 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <image>
+                        <name>carlosbarbosafilho/${project.artifactId}:${project.version}</name>
+                    </image>
+                </configuration>
                 <version>3.5.4</version>
                 <executions>
                     <execution>

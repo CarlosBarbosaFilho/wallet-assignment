@@ -17,7 +17,6 @@ import java.util.UUID;
 @NoArgsConstructor
 public class WalletsTransactionEvent {
 
-    private Long id;
     private String sourceWallet;
     private String emailSourceWallet;
     private String destinationWallet;

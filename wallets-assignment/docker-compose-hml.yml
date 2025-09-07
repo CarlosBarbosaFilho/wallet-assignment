@@ -44,6 +44,15 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
     networks:
       - local-network
+  ## Redis
+  redis:
+    image: redis:7.2
+    container_name: redis-cache-wallets
+    ports:
+      - "6379:6379"
+    networks:
+      - local-network
+    command: [ "redis-server", "--appendonly", "yes" ]
 
 ## Postgres Databases
   postgres:
@@ -96,7 +105,21 @@ services:
       - local-network
 
   ## Microservices
+  ms-notification:
+    image: carlosbarbosafilho/ms-notification:0.0.1
+    environment:
+      - AWS_REGION=us-east-1
+      - AWS_ENDPOINT_URL=http://localstack:4566
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: ms-notification
+    ports:
+      - "8084:8084"
+    networks:
+      - local-network
   ms-clients:
+    image: carlosbarbosafilho/ms-clients:0.0.1
     environment:
         - AWS_REGION=us-east-1
         - AWS_ENDPOINT_URL=http://localstack:4566
@@ -109,6 +132,7 @@ services:
     networks:
       - local-network
   ms-wallets:
+    image: carlosbarbosafilho/ms-wallets:0.0.1
     build:
       context: .
       dockerfile: Dockerfile
@@ -120,6 +144,7 @@ services:
     networks:
       - local-network
   ms-transactions:
+    image: carlosbarbosafilho/ms-transactions:0.0.1
     build:
       context: .
       dockerfile: Dockerfile
@@ -131,6 +156,7 @@ services:
     networks:
       - local-network
   api-gateway:
+    image: carlosbarbosafilho/gateway:0.0.1
     build:
       context: .
       dockerfile: Dockerfile
@@ -141,6 +167,7 @@ services:
       - ms-clients
       - ms-wallets
       - ms-transactions
+      - ms-notification
     networks:
       - local-network
 volumes:

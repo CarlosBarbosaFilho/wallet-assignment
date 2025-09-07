@@ -1,0 +1,80 @@
+package br.com.acme.application.usecases.share;
+
+import br.com.acme.application.domain.StatusTransaction;
+import br.com.acme.application.domain.model.TransactionDomain;
+import br.com.acme.application.ports.out.IPerformDepositTransactionRepository;
+import br.com.acme.application.ports.out.IPerformTransferTransactionRepository;
+import br.com.acme.application.ports.out.IPerformWithdrawTransactionRepository;
+import br.com.acme.utils.UseCase;
+import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
+
+import java.time.Duration;
+import java.util.Set;
+
+@UseCase
+@AllArgsConstructor
+public class FallbackTransactionProcess {
+
+    private static final Logger log = LoggerFactory.getLogger(FallbackTransactionProcess.class);
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final CompleteTransactionProcess completeTransactionProcess;
+
+    private final IPerformTransferTransactionRepository performTransferTransactionService;
+    private final IPerformWithdrawTransactionRepository performWithdrawTransactionService;
+    private final IPerformDepositTransactionRepository performDepositTransactionService;
+
+
+    @Scheduled(cron = "0 */1 * * * *")
+    public void reprocessTransactions() {
+        Set<String> keys = redisTemplate.keys("transactions:*");
+        if (keys == null || keys.isEmpty()) {
+            return;
+        }
+
+        for (String key : keys) {
+            TransactionDomain tx = (TransactionDomain) redisTemplate.opsForValue().get(key);
+            reprocessTransaction(tx, key);
+        }
+    }
+
+    public void reprocessTransaction(TransactionDomain tx, String key) {
+        if (tx == null) {
+            log.warn("Transaction not found for key: {}", key);
+            return;
+        }
+        log.info("Reprocessing transaction: {}", tx.getCodeTransaction());
+        processTransaction(tx);
+        redisTemplate.delete(key);
+        log.info("Transaction {} removed from Redis", tx.getCodeTransaction());
+    }
+
+    public void processTransaction(TransactionDomain tx) {
+        tx.setStatusTransaction(StatusTransaction.COMPLETED);
+        switch (tx.getTypeTransaction()) {
+            case DEPOSIT -> {
+                tx.setStatusTransaction(StatusTransaction.COMPLETED);
+                performDepositTransactionService.performDeposit(tx.getDestinationWallet(), tx.getAmountTransaction());
+                completeTransactionProcess.completeTransaction(tx);
+            }
+
+            case WITHDRAW ->{
+                performWithdrawTransactionService.performWithdraw(tx.getDestinationWallet(), tx.getAmountTransaction());
+                completeTransactionProcess.completeTransaction(tx);
+            }
+            case TRANSFER ->{
+                performTransferTransactionService.performTransfer(tx.getSourceWallet(), tx.getDestinationWallet(), tx.getAmountTransaction());
+                completeTransactionProcess.completeTransaction(tx);
+            }
+            default -> log.error("Unsupported transaction type: {}", tx.getTypeTransaction());
+        }
+    }
+
+    public void fallbackCreateTransactionOnRedis(TransactionDomain transactionDomain) {
+        var buildKey = "transactions:" + transactionDomain.getCodeTransaction().toString();
+        redisTemplate.opsForValue().set(buildKey, transactionDomain, Duration.ofDays(1));
+    }
+}

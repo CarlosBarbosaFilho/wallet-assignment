@@ -5,7 +5,6 @@ import br.com.acme.application.ports.in.IPerformDepositWalletUseCase;
 import br.com.acme.application.ports.out.GetWalletToTransactionRepository;
 import br.com.acme.utils.UseCase;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;

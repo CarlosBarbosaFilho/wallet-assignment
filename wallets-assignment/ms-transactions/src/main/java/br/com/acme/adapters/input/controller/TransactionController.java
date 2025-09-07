@@ -1,18 +1,21 @@
 package br.com.acme.adapters.input.controller;
 
+import br.com.acme.adapters.input.web.request.TransactionDeposit;
+import br.com.acme.adapters.input.web.request.TransactionTransfer;
+import br.com.acme.adapters.input.web.request.TransactionWithdraw;
 import br.com.acme.adapters.input.web.api.TransactionResource;
-import br.com.acme.adapters.input.web.request.TransactionTransferRequest;
 import br.com.acme.adapters.input.web.response.BalanceWalletInstant;
 import br.com.acme.adapters.input.web.response.BalanceWalletResponse;
 import br.com.acme.adapters.input.web.response.TransactionConfirmedResponse;
 import br.com.acme.adapters.input.web.response.TransactionResponse;
+import br.com.acme.application.domain.StatusTransaction;
+import br.com.acme.application.domain.TypeTransaction;
 import br.com.acme.application.domain.model.TransactionDomain;
 import br.com.acme.application.mapper.ConverterMapper;
-import br.com.acme.application.ports.in.IGetBalanceWalletInstantPassUseCase;
-import br.com.acme.application.ports.in.IGetTransactionsByPeriodUseCase;
-import br.com.acme.application.ports.in.IPerformTransactionUseCase;
+import br.com.acme.application.ports.in.*;
 import br.com.acme.application.ports.out.*;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -22,43 +25,50 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/transactions")
+@AllArgsConstructor
 public class TransactionController implements TransactionResource {
 
-    private final IPerformTransactionUseCase performTransactionService;
-    private final ICheckBalanceWalletRepository checkBalanceWalletService;
+    private final IGetBalanceWalletInstantPassUseCase getBalanceWalletInstantPass;
     private final IGetTransactionsByPeriodUseCase transactionsByPeriod;
 
+    private final IPerformTransferUseCase performTransferUseCase;
+    private final IPerformDepositUseCase performDepositUseCase;
+    private final IPerformWithdrawUseCase performWithdrawUseCase;
+
+    private final ICheckBalanceWalletRepository checkBalanceWalletService;
+
     private final CreateLogsCloudWatch createLogsCloudWatch;
-    private final IGetBalanceWalletInstantPassUseCase getBalanceWalletInstantPass;
     private final ConverterMapper converterMapper;
 
-
-    public TransactionController(IPerformTransactionUseCase performTransactionService,
-                                 IPerformWithdrawTransactionRepository performWithdrawTransactionService,
-                                 IPerformDepositTransactionRepository performDepositTransactionService,
-                                 IPerformTransferTransactionRepository performTransferTransactionService,
-                                 ICheckBalanceWalletRepository checkBalanceWalletService, IGetTransactionsByPeriodUseCase transactionsByPeriod,
-                                 CreateLogsCloudWatch createLogsCloudWatch,
-                                 IGetBalanceWalletInstantPassUseCase getBalanceWalletInstantPass,
-                                 ConverterMapper converterMapper) {
-        this.performTransactionService = performTransactionService;
-        this.checkBalanceWalletService = checkBalanceWalletService;
-        this.transactionsByPeriod = transactionsByPeriod;
-        this.createLogsCloudWatch = createLogsCloudWatch;
-        this.getBalanceWalletInstantPass = getBalanceWalletInstantPass;
-        this.converterMapper = converterMapper;
+    @Override
+    @PostMapping("/transfer")
+    @ResponseStatus(HttpStatus.CREATED)
+    public TransactionConfirmedResponse performTransfer(@Valid @RequestBody TransactionTransfer request) {
+        var domain = (TransactionDomain) this.converterMapper.convertObject(request, TransactionDomain.class);
+        this.createLogsCloudWatch.sendLog("Controller Layer -> Perform Transaction Transfer:: " + request);
+        domain.setTypeTransaction(TypeTransaction.TRANSFER);
+        return createTransactionResponse (this.performTransferUseCase.transfer(domain));
     }
 
     @Override
-    @PostMapping
+    @PostMapping("/deposit")
     @ResponseStatus(HttpStatus.CREATED)
-    public TransactionConfirmedResponse performTransaction(@Valid @RequestBody TransactionTransferRequest request) {
-
+    public TransactionConfirmedResponse performDeposit(@Valid @RequestBody TransactionDeposit request) {
         var domain = (TransactionDomain) this.converterMapper.convertObject(request, TransactionDomain.class);
-        this.createLogsCloudWatch.sendLog("Controller Layer -> Perform Transaction :: " + request);
-        return createTransactionResponse(this.performTransactionService.createTransaction(domain));
+        this.createLogsCloudWatch.sendLog("Controller Layer -> Perform Transaction Deposit:: " + request);
+        domain.setTypeTransaction(TypeTransaction.DEPOSIT);
+        return createTransactionResponse (this.performDepositUseCase.deposit(domain));
     }
 
+    @Override
+    @PostMapping("/withdraw")
+    @ResponseStatus(HttpStatus.CREATED)
+    public TransactionConfirmedResponse performWithdraw(@Valid @RequestBody TransactionWithdraw request) {
+        var domain = (TransactionDomain) this.converterMapper.convertObject(request, TransactionDomain.class);
+        this.createLogsCloudWatch.sendLog("Controller Layer -> Perform Transaction Withdraw:: " + request);
+        domain.setTypeTransaction(TypeTransaction.WITHDRAW);
+        return createTransactionResponse (this.performWithdrawUseCase.withdraw(domain));
+    }
 
     @Override
     @GetMapping
@@ -96,7 +106,12 @@ public class TransactionController implements TransactionResource {
     }
 
     private TransactionConfirmedResponse createTransactionResponse(TransactionDomain domain) {
-
+        if (domain.getStatusTransaction().equals(StatusTransaction.FAILED)) {
+            return TransactionConfirmedResponse.builder()
+                    .codeTransaction(domain.getCodeTransaction())
+                    .message("Transaction status is pending, please waiting for processing.")
+                    .build();
+        }
         return TransactionConfirmedResponse.builder()
                 .codeTransaction(domain.getCodeTransaction())
                 .message("Transaction performed with success.")

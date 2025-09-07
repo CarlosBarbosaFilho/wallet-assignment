@@ -50,7 +50,9 @@ spring:
       url: redis://localhost:6379
 
 event:
-  topic: events-wallets-transaction
+  topic:
+    success: events-wallets-transaction
+    failed: events-wallets-transaction-failed
 
 client:
   url: http://localhost:8090/api/v1/wallets

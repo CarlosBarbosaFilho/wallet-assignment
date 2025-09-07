@@ -34,5 +34,12 @@ config:
   url-docker-localstack: http://localstack:4566
 sns:
   topic-arn-transaction: arn:aws:sns:us-east-1:000000000000:transactions
+  redis:
+    url: redis://localhost:6379
+
 event:
-  topic: events-wallets-transaction
+  topic:
+    success: events-wallets-transaction
+    failed: events-wallets-transaction-failed
+
+

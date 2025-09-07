@@ -1,8 +1,6 @@
 package br.com.acme.application.domain;
 
-import br.com.acme.adapters.output.infra.entity.Client;
-import br.com.acme.application.mapper.ConverterMapper;
-import br.com.acme.application.mapper.ModelMapperConfig;
+import br.com.acme.domain.output.infra.entity.Client;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

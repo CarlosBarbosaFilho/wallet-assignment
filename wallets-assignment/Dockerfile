@@ -33,3 +33,10 @@ WORKDIR /app
 COPY --from=builder /app/gateway/target/gateway-1.0-SNAPSHOT.jar app.jar
 EXPOSE 8085
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
+#  Runtime  ms-notification
+FROM eclipse-temurin:17-jre-jammy AS ms-notification
+WORKDIR /app
+COPY --from=builder /app/ms-notification/target/ms-notification-1.0-SNAPSHOT.jar app.jar
+EXPOSE 8084
+ENTRYPOINT ["java", "-jar", "app.jar"]

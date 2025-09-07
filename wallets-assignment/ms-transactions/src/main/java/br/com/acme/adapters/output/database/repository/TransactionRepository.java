@@ -28,4 +28,14 @@ public interface TransactionRepository extends JpaRepository <TransactionEntity,
             LocalDateTime startDate,
             LocalDateTime endDate
     );
+
+    @Query(value = "SELECT * FROM tb_transactions t WHERE t.destination_wallet = :wallet ORDER BY t.created_at DESC LIMIT 1",
+            nativeQuery = true)
+    TransactionEntity findTransactionByDestinationWallet(@Param("wallet") String wallet);
+
+    @Query(value = "SELECT * FROM tb_transactions t WHERE t.source_wallet = :wallet ORDER BY t.created_at DESC LIMIT 1",
+            nativeQuery = true)
+    TransactionEntity findTransactionBySourceWallet(@Param("wallet") String wallet);
+
+
 }
