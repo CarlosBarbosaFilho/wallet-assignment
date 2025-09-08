@@ -1,8 +1,8 @@
 package br.com.acme.application.ports.out;
 
-import java.math.BigDecimal;
+import br.com.acme.adapters.output.client.requests.TransferRequest;
 
 public interface IPerformTransferTransactionRepository {
 
-    Boolean performTransfer(String walletSource, String walletDestination, BigDecimal amount);
+    Boolean performTransfer(TransferRequest transferRequest);
 }

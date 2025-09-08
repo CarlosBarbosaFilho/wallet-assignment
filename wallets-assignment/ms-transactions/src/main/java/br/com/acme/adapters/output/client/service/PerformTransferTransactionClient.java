@@ -1,6 +1,7 @@
 package br.com.acme.adapters.output.client.service;
 
 import br.com.acme.adapters.output.client.PerformTransferWalletClient;
+import br.com.acme.adapters.output.client.requests.TransferRequest;
 import br.com.acme.application.exceptions.FailedPerformedTransactionException;
 import br.com.acme.application.ports.out.CreateLogsCloudWatch;
 import br.com.acme.application.ports.out.IPerformTransferTransactionRepository;
@@ -17,13 +18,13 @@ public class PerformTransferTransactionClient implements IPerformTransferTransac
     private final PerformTransferWalletClient performTransferWalletClient;
 
     @Override
-    public Boolean performTransfer (String walletSource, String walletDestination, BigDecimal amount) {
+    public Boolean performTransfer (TransferRequest transferRequest) {
         try{
-            this.performTransferWalletClient.performTransfer(walletSource, walletDestination, amount);
+            this.performTransferWalletClient.performTransfer(transferRequest);
             return true;
         }catch (FailedPerformedTransactionException ex) {
-            createLogsCloudWatch.sendLog("This transaction with dates of "+walletSource+ " and " +
-                 walletDestination+   " and amount" +amount + "don't  was processed your status is PENDING");
+            createLogsCloudWatch.sendLog("This transaction with dates of "+transferRequest.getSourceWallet()+ " and " +
+                 transferRequest.getDestinationWallet()+   " and amount" +transferRequest.getAmount() + "don't  was processed your status is PENDING");
             return false;
         }
     }

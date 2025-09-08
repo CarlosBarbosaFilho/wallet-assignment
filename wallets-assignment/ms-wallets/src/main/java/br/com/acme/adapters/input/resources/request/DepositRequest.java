@@ -1,6 +1,5 @@
-package br.com.acme.adapters.input.web.request;
+package br.com.acme.adapters.input.resources.request;
 
-import br.com.acme.application.domain.TypeTransaction;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -11,20 +10,16 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
-@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransactionTransfer {
-
-    @NotBlank(message = "Field sourceWallet is required")
-    private String sourceWallet;
+@Data
+public class DepositRequest {
 
     @NotBlank(message = "Field destinationWallet is required")
     private String destinationWallet;
 
     @NotNull(message = "Field amountTransaction is required")
     @Positive(message = "Transaction amount must be greater than zero")
-    private BigDecimal amountTransaction;
-
+    private BigDecimal amount;
 }

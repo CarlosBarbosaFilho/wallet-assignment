@@ -1,7 +1,10 @@
 package br.com.acme.adapters.input.web;
 
 import br.com.acme.adapters.input.resources.WalletsResource;
+import br.com.acme.adapters.input.resources.request.DepositRequest;
+import br.com.acme.adapters.input.resources.request.TransferRequest;
 import br.com.acme.adapters.input.resources.request.WalletRequest;
+import br.com.acme.adapters.input.resources.request.WithdrawRequest;
 import br.com.acme.adapters.input.resources.response.WalletResponse;
 import br.com.acme.application.domain.model.WalletDomain;
 import br.com.acme.application.domain.WalletStatus;
@@ -44,18 +47,22 @@ public class WalletsController implements WalletsResource {
     }
 
     @Override
-    public String performDeposit(String walletNumber, BigDecimal amount) {
-        return performDepositWalletService.performDeposit(walletNumber, amount);
+    public String deposit(DepositRequest depositRequest) {
+        return this.performDepositWalletService.performDeposit(depositRequest.getDestinationWallet(),
+                depositRequest.getAmount());
     }
 
     @Override
-    public String performWithdraw(String walletNumber, BigDecimal amount) {
-        return performWithdrawWalletService.performWithdraw(walletNumber, amount);
+    public String withdraw(WithdrawRequest withdrawRequest) {
+        return this.performWithdrawWalletService.performWithdraw(withdrawRequest.getSourceWallet(),
+                withdrawRequest.getAmount());
     }
 
     @Override
-    public String performTransfer(String walletSource, String walletDestination, BigDecimal amount) {
-        return performTransferWalletService.performTransfer(walletSource, walletDestination, amount);
+    public String transfer(TransferRequest transferRequest) {
+        return this.performTransferWalletService.performTransfer(transferRequest.getSourceWallet(),
+                transferRequest.getDestinationWallet(),
+                transferRequest.getAmount());
     }
 
     @Override

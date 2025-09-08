@@ -1,5 +1,6 @@
 package br.com.acme.application.usecases.transactions;
 
+import br.com.acme.adapters.output.client.requests.TransferRequest;
 import br.com.acme.application.domain.StatusTransaction;
 import br.com.acme.application.domain.model.TransactionDomain;
 import br.com.acme.application.exceptions.WalletDestinationEqualsWalletSource;
@@ -12,6 +13,7 @@ import br.com.acme.application.usecases.share.UpdateWalletBalanceProcess;
 import br.com.acme.application.usecases.share.ValidWalletBalanceProcess;
 import br.com.acme.utils.UseCase;
 import lombok.AllArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -27,6 +29,7 @@ public class PerformTransferUseCase implements IPerformTransferUseCase {
     private final ValidWalletBalanceProcess validateBalance;
 
     @Override
+    @Transactional
     public TransactionDomain transfer(TransactionDomain transactionDomain) {
         validateBalance.validateBalance(transactionDomain);
         updateWalletBalanceProcess.updateWalletBalance(transactionDomain);
@@ -35,8 +38,13 @@ public class PerformTransferUseCase implements IPerformTransferUseCase {
             throw new WalletDestinationEqualsWalletSource("The source wallet is the same as the destination wallet");
         }
 
-        if (this.performTransferTransactionRepository.performTransfer(transactionDomain.getSourceWallet(), transactionDomain.getDestinationWallet(),
-                transactionDomain.getAmountTransaction())) {
+        if (this.performTransferTransactionRepository.performTransfer(
+                TransferRequest.builder()
+                        .destinationWallet(transactionDomain.getDestinationWallet())
+                        .sourceWallet(transactionDomain.getSourceWallet())
+                        .amount(transactionDomain.getAmountTransaction())
+                        .build()
+        )) {
             completeTransaction.completeTransaction(transactionDomain);
 
         }else {

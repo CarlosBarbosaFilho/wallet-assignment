@@ -1,5 +1,8 @@
 package br.com.acme.application.usecases.share;
 
+import br.com.acme.adapters.output.client.requests.DepositRequest;
+import br.com.acme.adapters.output.client.requests.TransferRequest;
+import br.com.acme.adapters.output.client.requests.WithdrawRequest;
 import br.com.acme.application.domain.StatusTransaction;
 import br.com.acme.application.domain.model.TransactionDomain;
 import br.com.acme.application.ports.out.IPerformDepositTransactionRepository;
@@ -57,16 +60,16 @@ public class FallbackTransactionProcess {
         switch (tx.getTypeTransaction()) {
             case DEPOSIT -> {
                 tx.setStatusTransaction(StatusTransaction.COMPLETED);
-                performDepositTransactionService.performDeposit(tx.getDestinationWallet(), tx.getAmountTransaction());
+                performDepositTransactionService.performDeposit(createDepositRequest(tx));
                 completeTransactionProcess.completeTransaction(tx);
             }
 
             case WITHDRAW ->{
-                performWithdrawTransactionService.performWithdraw(tx.getDestinationWallet(), tx.getAmountTransaction());
+                performWithdrawTransactionService.performWithdraw(createWithdrawRequest(tx));
                 completeTransactionProcess.completeTransaction(tx);
             }
             case TRANSFER ->{
-                performTransferTransactionService.performTransfer(tx.getSourceWallet(), tx.getDestinationWallet(), tx.getAmountTransaction());
+                performTransferTransactionService.performTransfer(createTransferRequest(tx));
                 completeTransactionProcess.completeTransaction(tx);
             }
             default -> log.error("Unsupported transaction type: {}", tx.getTypeTransaction());
@@ -77,4 +80,28 @@ public class FallbackTransactionProcess {
         var buildKey = "transactions:" + transactionDomain.getCodeTransaction().toString();
         redisTemplate.opsForValue().set(buildKey, transactionDomain, Duration.ofDays(1));
     }
+
+    private DepositRequest createDepositRequest(TransactionDomain transactionDomain) {
+        return DepositRequest.builder()
+                .amount(transactionDomain.getAmountTransaction())
+                .destinationWallet(transactionDomain.getDestinationWallet())
+                .build();
+    }
+
+    private WithdrawRequest createWithdrawRequest(TransactionDomain transactionDomain) {
+        return WithdrawRequest.builder()
+                .amount(transactionDomain.getAmountTransaction())
+                .sourceWallet(transactionDomain.getDestinationWallet())
+                .build();
+    }
+
+    private TransferRequest createTransferRequest(TransactionDomain transactionDomain) {
+        return TransferRequest.builder()
+                .amount(transactionDomain.getAmountTransaction())
+                .sourceWallet(transactionDomain.getDestinationWallet())
+                .destinationWallet(transactionDomain.getDestinationWallet())
+                .build();
+    }
+
+
 }

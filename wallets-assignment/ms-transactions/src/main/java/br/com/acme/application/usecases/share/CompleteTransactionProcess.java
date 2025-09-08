@@ -8,9 +8,11 @@ import br.com.acme.application.ports.out.ICheckCurrentBalanceDestinationReposito
 import br.com.acme.application.ports.out.ICheckCurrentBalanceSourceRepository;
 import br.com.acme.application.ports.out.IProducerEventsWalletTransaction;
 import br.com.acme.utils.UseCase;
+import br.com.acme.utils.Utils;
 import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @UseCase
 @AllArgsConstructor
@@ -22,6 +24,7 @@ public class CompleteTransactionProcess {
     private final ICheckCurrentBalanceDestinationRepository checkCurrentBalanceDestinationRepository;
     private final ICheckCurrentBalanceSourceRepository checkCurrentBalanceSourceRepository;
     private final ICheckBalanceWalletRepository checkBalanceWalletRepository;
+    private final Utils utils;
 
     public void completeTransaction(TransactionDomain transactionDomain) {
         updateBalancesWallets(transactionDomain);
@@ -32,12 +35,16 @@ public class CompleteTransactionProcess {
 
     private void updateBalancesWallets(TransactionDomain transactionDomain) {
         switch (transactionDomain.getTypeTransaction()) {
-            case DEPOSIT -> transactionDomain.setCurrentBalanceDestinationWallet(
-                    getDestinationBalanceSafely(transactionDomain)
-            );
-            case WITHDRAW -> transactionDomain.setCurrentBalanceSourceWallet(
-                    getSourceBalanceSafely(transactionDomain)
-            );
+            case DEPOSIT -> {
+                transactionDomain.setCurrentBalanceDestinationWallet(
+                        getDestinationBalanceSafely(transactionDomain)
+                );
+            }
+            case WITHDRAW -> {
+                transactionDomain.setCurrentBalanceSourceWallet(
+                        getSourceBalanceSafely(transactionDomain)
+                );
+            }
             case TRANSFER -> {
                 transactionDomain.setCurrentBalanceSourceWallet(
                         getSourceBalanceSafely(transactionDomain)
@@ -53,6 +60,7 @@ public class CompleteTransactionProcess {
     }
 
     private TransactionDomain createTransaction(TransactionDomain transactionDomain) {
+        transactionDomain.setCreatedAt(LocalDateTime.now().withNano(0));
         var completedEntity = transactionRepository.save(TransactionDomain.toEntityCompleted(transactionDomain));
         return TransactionDomain.fromEntity(completedEntity);
     }
