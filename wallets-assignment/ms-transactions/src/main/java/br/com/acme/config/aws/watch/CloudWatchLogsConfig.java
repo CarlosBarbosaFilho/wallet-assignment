@@ -1,4 +1,4 @@
-package br.com.acme.config.aws;
+package br.com.acme.config.aws.watch;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

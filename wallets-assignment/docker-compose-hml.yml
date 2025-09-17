@@ -105,6 +105,20 @@ services:
       - local-network
 
   ## Microservices
+  ms-analysis-engine:
+    image: carlosbarbosafilho/ms-analysis-engine:0.0.1
+    environment:
+      - AWS_REGION=us-east-1
+      - AWS_ENDPOINT_URL=http://localstack:4566
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: ms-analysis-engine
+    ports:
+      - "8086:8086"
+    networks:
+      - local-network
+
   ms-notification:
     image: carlosbarbosafilho/ms-notification:0.0.1
     environment:
@@ -118,6 +132,7 @@ services:
       - "8084:8084"
     networks:
       - local-network
+
   ms-clients:
     image: carlosbarbosafilho/ms-clients:0.0.1
     environment:
@@ -131,6 +146,7 @@ services:
       - "8081:8081"
     networks:
       - local-network
+
   ms-wallets:
     image: carlosbarbosafilho/ms-wallets:0.0.1
     build:
@@ -143,6 +159,7 @@ services:
       - postgres
     networks:
       - local-network
+
   ms-transactions:
     image: carlosbarbosafilho/ms-transactions:0.0.1
     build:
@@ -155,6 +172,7 @@ services:
       - postgres
     networks:
       - local-network
+
   api-gateway:
     image: carlosbarbosafilho/gateway:0.0.1
     build:
@@ -170,10 +188,13 @@ services:
       - ms-notification
     networks:
       - local-network
+
 volumes:
   postgres-data:
   pgadmin-data:
   localstack_data:
+
 networks:
   local-network:
     driver: bridge
+    external: true

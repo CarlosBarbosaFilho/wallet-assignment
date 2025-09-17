@@ -28,3 +28,5 @@ echo "🐳 Up all services with Docker Compose..."
 docker compose -f "$CONFIG_FILE" up -d --build
 
 echo "✅ Environment docker initializer successfully"
+
+

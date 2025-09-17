@@ -71,4 +71,16 @@ aws dynamodb create-table \
     ]' \
     --endpoint-url http://localhost:4566 --region us-east-1
 
+# SES Create Verify E-mail
+aws --endpoint-url=http://localhost:4566 \
+    ses verify-email-identity \
+    --email-address "cbarbosagomesfilho@gmail.com" \
+    --region us-east-1
+
+
+
+# Create S3 Bucket to  Lambda Function
+
+
+
 echo "==== Resources created with successfully ===="

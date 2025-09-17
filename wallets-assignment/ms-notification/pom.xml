@@ -23,6 +23,11 @@
             <artifactId>ses</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
         <!-- Spring Cloud AWS para SQS -->
         <dependency>
             <groupId>io.awspring.cloud</groupId>

@@ -16,7 +16,7 @@ services:
     container_name: events-transactions-wallets
     environment:
       - KAFKA_BROKER_ID=1
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ZOOKEEPER_CONNECT=zk:2181
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
       - KAFKA_LISTENERS=PLAINTEXT://:9092,PLAINTEXT_HOST://:29092
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
@@ -40,7 +40,6 @@ services:
       - 8089:8080
     environment:
       KAFKA_CLUSTERS_0_NAME: local
-      # O Kafka UI se conecta ao Kafka usando o nome do serviço interno
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
     networks:
       - local-network
@@ -86,6 +85,7 @@ services:
       LOCALSTACK_API_KEY: ${LOCALSTACK_API_KEY-}
       EDGE_PORT: 4566
       AWS_DEFAULT_REGION: us-east-1
+      S3_URL_STYLE: path
     ports:
       - "4566:4566"   # Endpoint principal
       - "4510-4559:4510-4559"
@@ -114,3 +114,4 @@ volumes:
 networks:
   local-network:
     driver: bridge
+    external: true

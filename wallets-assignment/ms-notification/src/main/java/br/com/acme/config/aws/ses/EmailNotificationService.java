@@ -1,9 +1,7 @@
-package br.com.acme.config;
+package br.com.acme.config.aws.ses;
 
 import lombok.AllArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.ses.SesClient;
 import software.amazon.awssdk.services.ses.model.*;
 
@@ -11,7 +9,7 @@ import java.math.BigDecimal;
 
 @Component
 @AllArgsConstructor
-public class EmailNotificationService implements NotificationClient{
+public class EmailNotificationService implements NotificationClient {
 
     private final SesClient sesClient;
 

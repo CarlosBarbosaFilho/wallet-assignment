@@ -1,0 +1,40 @@
+server:
+  port: 8086
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: prometheus
+    metrics:
+      export:
+        prometheus:
+          enabled: true
+spring:
+  application:
+    name: ms-analysis-engine
+  kafka:
+    consumer:
+      group-id: consumer-events-wallets-transactions-success-replay
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.value.default.type: br.com.acme.kafka.WalletsTransactionEvent
+        spring.json.trusted.packages: '*'
+        spring.json.use.type.headers: false
+      auto-offset-reset: earliest
+    bootstrap-servers:
+      - localhost:29092
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+event:
+  topic:
+    success: events-wallets-transaction
+    failed: events-wallets-transaction-failed

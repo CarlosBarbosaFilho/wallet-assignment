@@ -1,4 +1,4 @@
-package br.com.acme.config;
+package br.com.acme.config.aws.ses;
 
 import java.math.BigDecimal;
 

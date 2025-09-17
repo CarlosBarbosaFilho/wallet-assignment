@@ -11,6 +11,6 @@ echo "🚀 Ending all services"
 docker compose -f "$CONFIG_FILE" down -v
 
 echo "🐳 Up all services with Docker Compose..."
-docker compose -f "$CONFIG_FILE" up -d --build
+docker compose -f "$CONFIG_FILE" up -d --build --remove-orphans
 
 echo "✅ Environment docker initializer successfully"
