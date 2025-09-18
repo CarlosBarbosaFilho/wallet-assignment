@@ -35,7 +35,7 @@ config:
 sns:
   topic-arn-transaction: arn:aws:sns:us-east-1:000000000000:transactions
   redis:
-    url: redis://localhost:6379
+    url: http://redis:6379
 
 event:
   topic:

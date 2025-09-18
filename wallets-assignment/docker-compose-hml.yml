@@ -105,20 +105,6 @@ services:
       - local-network
 
   ## Microservices
-  ms-analysis-engine:
-    image: carlosbarbosafilho/ms-analysis-engine:0.0.1
-    environment:
-      - AWS_REGION=us-east-1
-      - AWS_ENDPOINT_URL=http://localstack:4566
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: ms-analysis-engine
-    ports:
-      - "8086:8086"
-    networks:
-      - local-network
-
   ms-notification:
     image: carlosbarbosafilho/ms-notification:0.0.1
     environment:
@@ -170,6 +156,16 @@ services:
       - "8083:8083"
     depends_on:
       - postgres
+      - redis
+    networks:
+      - local-network
+
+  ms-aws-lambdas:
+    image: carlosbarbosafilho/aws-lambdas:0.0.1
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: aws-lambdas
     networks:
       - local-network
 

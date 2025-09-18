@@ -22,7 +22,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class FallbackTransactionProcess {
 
-    private static final Logger log = LoggerFactory.getLogger(FallbackTransactionProcess.class);
+    private static final Logger logger = LoggerFactory.getLogger(FallbackTransactionProcess.class);
     private final RedisTemplate<String, Object> redisTemplate;
     private final CompleteTransactionProcess completeTransactionProcess;
 
@@ -33,6 +33,7 @@ public class FallbackTransactionProcess {
 
     @Scheduled(cron = "0 */1 * * * *")
     public void reprocessTransactions() {
+        logger.info("Scheduler in action ....");
         Set<String> keys = redisTemplate.keys("transactions:*");
         if (keys == null || keys.isEmpty()) {
             return;
@@ -42,17 +43,18 @@ public class FallbackTransactionProcess {
             TransactionDomain tx = (TransactionDomain) redisTemplate.opsForValue().get(key);
             reprocessTransaction(tx, key);
         }
+        logger.info("Scheduler finished ....");
     }
 
     public void reprocessTransaction(TransactionDomain tx, String key) {
         if (tx == null) {
-            log.warn("Transaction not found for key: {}", key);
+            logger.warn("Transaction not found for key: {}", key);
             return;
         }
-        log.info("Reprocessing transaction: {}", tx.getCodeTransaction());
+        logger.info("Reprocessing transaction: {}", tx.getCodeTransaction());
         processTransaction(tx);
         redisTemplate.delete(key);
-        log.info("Transaction {} removed from Redis", tx.getCodeTransaction());
+        logger.info("Transaction {} removed from Redis", tx.getCodeTransaction());
     }
 
     public void processTransaction(TransactionDomain tx) {
@@ -72,7 +74,7 @@ public class FallbackTransactionProcess {
                 performTransferTransactionService.performTransfer(createTransferRequest(tx));
                 completeTransactionProcess.completeTransaction(tx);
             }
-            default -> log.error("Unsupported transaction type: {}", tx.getTypeTransaction());
+            default -> logger.error("Unsupported transaction type: {}", tx.getTypeTransaction());
         }
     }
 

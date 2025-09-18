@@ -41,10 +41,9 @@ COPY --from=builder /app/ms-notification/target/ms-notification-1.0-SNAPSHOT.jar
 EXPOSE 8084
 ENTRYPOINT ["java", "-jar", "app.jar"]
 
-
-#  Runtime  ms-analysis-engine
-FROM eclipse-temurin:17-jre-jammy AS  ms-analysis-engine
+#  Runtime aws-lambdas
+FROM eclipse-temurin:17-jre-jammy AS aws-lambdas
 WORKDIR /app
-COPY --from=builder /app/ms-analysis-engine/target/ms-analysis-engine-1.0-SNAPSHOT.jar app.jar
-EXPOSE 8086
+COPY --from=builder /app/aws-lambdas/target/aws-lambdas-1.0-SNAPSHOT.jar app.jar
+EXPOSE 8899
 ENTRYPOINT ["java", "-jar", "app.jar"]

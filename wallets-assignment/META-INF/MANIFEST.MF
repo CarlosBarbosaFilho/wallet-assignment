@@ -1,7 +1,6 @@
 Manifest-Version: 1.0
 Created-By: Maven JAR Plugin 3.4.1
 Build-Jdk-Spec: 17
-Main-Class: org.springframework.boot.loader.launch.JarLauncher
 Start-Class: br.com.acme.ClientsServiceApplication
 Spring-Boot-Version: 3.5.4
 Spring-Boot-Classes: BOOT-INF/classes/

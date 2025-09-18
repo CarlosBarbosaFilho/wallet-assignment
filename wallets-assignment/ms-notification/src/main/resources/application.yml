@@ -16,4 +16,4 @@ spring:
         access-key: cbgomes
         secret-key: cbgomes
       sqs:
-        endpoint: http://localhost:4566
+        endpoint: http://localstack:4566

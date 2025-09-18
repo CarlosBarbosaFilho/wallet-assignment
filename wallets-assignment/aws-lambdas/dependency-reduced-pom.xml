@@ -12,8 +12,18 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
         <configuration>
           <skip>true</skip>
+          <image>
+            <name>carlosbarbosafilho/${project.artifactId}:${project.version}</name>
+          </image>
         </configuration>
       </plugin>
       <plugin>
@@ -36,6 +46,11 @@
                   </excludes>
                 </filter>
               </filters>
+              <transformers>
+                <transformer>
+                  <mainClass>br.com.acme.ApplicationLambdaService</mainClass>
+                </transformer>
+              </transformers>
             </configuration>
           </execution>
         </executions>

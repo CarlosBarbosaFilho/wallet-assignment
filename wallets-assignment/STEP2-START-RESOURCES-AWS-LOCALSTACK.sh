@@ -80,7 +80,6 @@ aws --endpoint-url=http://localhost:4566 \
 
 
 # Create S3 Bucket to  Lambda Function
-
-
+aws --endpoint-url=http://localhost:4566 s3 mb s3://lambda-functions-bucket --region us-east-1
 
 echo "==== Resources created with successfully ===="
