@@ -16,7 +16,8 @@ public class SesConfig {
     public SesClient sesClient() {
         return SesClient.builder()
                 .region(Region.US_EAST_1)
-                .endpointOverride(URI.create("http://localhost:4566")) // LocalStack
+                //.endpointOverride(URI.create("http://localhost:4566")) // LocalStack
+                .endpointOverride(URI.create("http://localstack:4566")) // LocalStack
                 .credentialsProvider(
                         StaticCredentialsProvider.create(
                                 AwsBasicCredentials.create("cbgomes", "cbgomes")

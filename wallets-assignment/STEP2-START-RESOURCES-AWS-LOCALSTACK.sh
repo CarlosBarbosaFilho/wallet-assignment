@@ -82,4 +82,13 @@ aws --endpoint-url=http://localhost:4566 \
 # Create S3 Bucket to  Lambda Function
 aws --endpoint-url=http://localhost:4566 s3 mb s3://lambda-functions-bucket --region us-east-1
 
+# Consulting bucket S3
+
+#aws --endpoint-url=http://localhost:4566 lambda invoke \
+#  --function-name dlq-reprocess-transactions \
+#  --invocation-type RequestResponse \
+#  --payload '{}' --region us-east-1 \
+#  output.txt
+
+
 echo "==== Resources created with successfully ===="

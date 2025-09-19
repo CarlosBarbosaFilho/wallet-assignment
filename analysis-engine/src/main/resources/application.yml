@@ -1,0 +1,29 @@
+server:
+  port: 8889
+
+spring:
+  application:
+    name: analysis-engine-transactions
+  kafka:
+    bootstrap-servers: localhost:29092
+    consumer:
+      group-id: consumer-events-wallets-transactions-success-replay-v1
+      auto-offset-reset: earliest
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  endpoints:
+    web:
+      exposure:
+        include: ["prometheus"]
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            request: true
+  observations:
+    key-values:
+      application: analysis-engine
