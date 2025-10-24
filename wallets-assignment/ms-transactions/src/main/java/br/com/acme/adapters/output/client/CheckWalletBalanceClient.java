@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 
-@FeignClient(name = "checkWalletBalanceClient", url = "${client.url}")
+@FeignClient(name = "MS-WALLET", contextId = "checkWalletBalanceClient")
 public interface CheckWalletBalanceClient {
 
-    @GetMapping(value = "/check-balance", consumes = "application/json", produces = "application/json")
+    @GetMapping(value = "/api/v1/wallets/check-balance", consumes = "application/json", produces = "application/json")
     BigDecimal checkWalletBalance(@RequestParam("walletNumber") String walletNumber);
 }

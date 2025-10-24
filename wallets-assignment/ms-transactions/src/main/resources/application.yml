@@ -1,5 +1,9 @@
 server:
   port: 8083
+eureka:
+  client:
+    service-url:
+      defaultZone: http://service-discovery:8761/eureka/
 spring:
   application:
     name: ms-transaction
@@ -11,7 +15,6 @@ spring:
     redis:
       host: redis
       port: 6379
-
   datasource:
     url: jdbc:postgresql://postgres:5432/ms-transactions
     username: postgres
@@ -34,7 +37,7 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 client:
-  url: http://ms-wallets:8082/api/v1/wallets
+  url: lb://MS-WALLET/api/v1/wallets
 
 config:
   url-docker-localstack: http://localstack:4566

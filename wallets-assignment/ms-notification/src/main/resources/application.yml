@@ -1,5 +1,9 @@
 server:
   port: 8084
+eureka:
+  client:
+    service-url:
+      defaultZone: http://service-discovery:8761/eureka/
 management:
   endpoints:
     web:
@@ -17,3 +21,7 @@ spring:
         secret-key: cbgomes
       sqs:
         endpoint: http://localstack:4566
+
+logging:
+  level:
+    org.springframework.cloud.loadbalancer: DEBUG

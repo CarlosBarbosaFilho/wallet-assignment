@@ -1,5 +1,9 @@
 server:
   port: 8092
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
 management:
   endpoint:
     health:
@@ -21,8 +25,8 @@ spring:
       region:
         static: us-east-1
       kinesis:
-       endpoint: http://localhost:4566
-       stream-name: event-transactions-wallets
+        endpoint: http://localhost:4566
+        stream-name: event-transactions-wallets
   datasource:
     url: jdbc:postgresql://localhost:5432/ms-transactions
     username: postgres
@@ -30,7 +34,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+    #ddl-auto: create
     show-sql: true
     properties:
       hibernate:
@@ -45,20 +49,20 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
-  data:
-    redis:
-      url: redis://localhost:6379
-
 event:
-  topic:
-    success: events-wallets-transaction
-    failed: events-wallets-transaction-failed
+  topic: events-wallets-transaction
 
-client:
-  url: http://localhost:8090/api/v1/wallets
+#client:
+#  url: http://localhost:8090/api/v1/wallets
 
 config:
   url-docker-localstack: http://localhost:4566
 
 sns:
   topic-arn-transaction: arn:aws:sns:us-east-1:000000000000:transactions
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.loadbalancer: DEBUG
+    reactor.netty.http.client: DEBUG

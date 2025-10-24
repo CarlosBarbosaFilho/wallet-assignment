@@ -6,28 +6,38 @@ spring:
     name: api-gateway
   main:
     web-application-type: reactive
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: clients-service
+              uri: lb://MS-CLIENTS
+              predicates:
+                - Path=/api/v1/clients/**
+              filters:
+                - StripPrefix=0
 
-cloud:
-  gateway:
-    routes:
-      - id: clients-service
-        uri: http://ms-clients:8081
-        predicates:
-          - Path=/api/v1/clients, /api/v1/clients/**
-        filters:
-        - StripPrefix=0
-      - id: wallets-service
-        uri: http://ms-wallets:8082
-        predicates:
-          - Path=/api/v1/wallets/**, /api/v1/wallets
-        filters:
-          - StripPrefix=0
-      - id: transactions-service
-        uri: http://ms-transactions:8083
-        predicates:
-          - Path=/api/v1/transactions/**, /api/v1/transactions
-        filters:
-          - StripPrefix=0
+            - id: wallets-service
+              uri: lb://MS-WALLET
+              predicates:
+                - Path=/api/v1/wallets/**
+              filters:
+                - StripPrefix=0
+
+            - id: transactions-service
+              uri: lb://MS-TRANSACTION
+              predicates:
+                - Path=/api/v1/transactions/**
+              filters:
+                - StripPrefix=0
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://service-discovery:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
 
 logging:
   level:

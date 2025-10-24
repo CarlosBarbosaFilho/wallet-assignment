@@ -17,8 +17,8 @@ public class DLQReprocessLambda implements RequestHandler<Object, String> {
     private final Logger logger = LoggerFactory.getLogger(DLQReprocessLambda.class);
 
     private final  SqsClient sqs = SqsClient.builder()
-            .endpointOverride(URI.create("http://localstack:4566"))
-    //endpointOverride(URI.create("http://host.docker.internal:4566"))
+            //.endpointOverride(URI.create("http://localstack:4566"))
+            .endpointOverride(URI.create("http://host.docker.internal:4566"))
             .region(software.amazon.awssdk.regions.Region.US_EAST_1)
             .credentialsProvider(StaticCredentialsProvider.create(
                     AwsBasicCredentials.create("cbgomes","cbgomes")

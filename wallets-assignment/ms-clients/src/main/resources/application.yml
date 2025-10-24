@@ -6,6 +6,10 @@ management:
     web:
       exposure:
         include: health ,info,metrics
+eureka:
+  client:
+    service-url:
+      defaultZone: http://service-discovery:8761/eureka/
 spring:
   application:
     name: ms-clients

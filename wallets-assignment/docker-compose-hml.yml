@@ -1,27 +1,32 @@
+version: '3.8'
+
 services:
 
+  ## Zookeeper
   zookeeper:
-    image: bitnami/zookeeper:3.8
+    image: confluentinc/cp-zookeeper:7.7.0
     container_name: zk
     environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
     ports:
       - 2181:2181
     networks:
       - local-network
 
-    ## Apache Kafka
+  ## Apache Kafka
   kafka:
-    image: bitnami/kafka:3.6
+    image: confluentinc/cp-kafka:7.7.0
     container_name: events-transactions-wallets
     environment:
-      - KAFKA_BROKER_ID=1
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      -  KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,PLAINTEXT_HOST://host.docker.internal:29092
-      - KAFKA_LISTENERS=PLAINTEXT://:9092,PLAINTEXT_HOST://:29092
-      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
-      - ALLOW_PLAINTEXT_LISTENER=yes
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://host.docker.internal:29092
+      KAFKA_LISTENERS: PLAINTEXT://:9092,PLAINTEXT_HOST://:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     ports:
       - 9092:9092
       - 29092:29092
@@ -32,7 +37,7 @@ services:
 
   ## Kafka UI
   kafka-ui:
-    image: provectuslabs/kafka-ui
+    image: provectuslabs/kafka-ui:latest
     container_name: kafka-ui
     depends_on:
       - kafka
@@ -40,21 +45,22 @@ services:
       - 8089:8080
     environment:
       KAFKA_CLUSTERS_0_NAME: local
-      # O Kafka UI se conecta ao Kafka usando o nome do serviço interno
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
     networks:
       - local-network
+
   ## Redis
   redis:
     image: redis:7.2
     container_name: redis-cache-wallets
     ports:
       - "6379:6379"
+    command: [ "redis-server", "--appendonly", "yes" ]
     networks:
       - local-network
-    command: [ "redis-server", "--appendonly", "yes" ]
 
-## Postgres Databases
+  ## Postgres Database
   postgres:
     image: postgres:17.5
     container_name: wallet-bank
@@ -69,9 +75,10 @@ services:
     networks:
       - local-network
 
-  ## PG Admin
+  ## PGAdmin
   pgadmin:
     image: dpage/pgadmin4:9.5
+    container_name: pgadmin
     depends_on:
       - postgres
     environment:
@@ -84,7 +91,7 @@ services:
     networks:
       - local-network
 
-## LocalStack
+  ## LocalStack
   localstack:
     image: localstack/localstack:3
     container_name: localstack-wallet-assignment
@@ -96,7 +103,7 @@ services:
       EDGE_PORT: 4566
       AWS_DEFAULT_REGION: us-east-1
     ports:
-      - "4566:4566"   # Endpoint principal
+      - "4566:4566"
       - "4510-4559:4510-4559"
     volumes:
       - localstack_data:/var/lib/localstack
@@ -105,31 +112,46 @@ services:
       - local-network
 
   ## Microservices
+  service-discovery:
+    image: carlosbarbosafilho/service-discovery:0.0.1
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: service-discovery
+    ports:
+      - "8761:8761"
+    networks:
+      - local-network
+
   ms-notification:
     image: carlosbarbosafilho/ms-notification:0.0.1
     environment:
-      - AWS_REGION=us-east-1
-      - AWS_ENDPOINT_URL=http://localstack:4566
+      AWS_REGION: us-east-1
+      AWS_ENDPOINT_URL: http://localstack:4566
     build:
       context: .
       dockerfile: Dockerfile
       target: ms-notification
     ports:
       - "8084:8084"
+    depends_on:
+      - service-discovery
     networks:
       - local-network
 
   ms-clients:
     image: carlosbarbosafilho/ms-clients:0.0.1
     environment:
-        - AWS_REGION=us-east-1
-        - AWS_ENDPOINT_URL=http://localstack:4566
+      AWS_REGION: us-east-1
+      AWS_ENDPOINT_URL: http://localstack:4566
     build:
       context: .
       dockerfile: Dockerfile
       target: ms-clients
     ports:
       - "8081:8081"
+    depends_on:
+      - service-discovery
     networks:
       - local-network
 
@@ -143,6 +165,7 @@ services:
       - "8082:8082"
     depends_on:
       - postgres
+      - service-discovery
     networks:
       - local-network
 
@@ -157,6 +180,7 @@ services:
     depends_on:
       - postgres
       - redis
+      - service-discovery
     networks:
       - local-network
 
@@ -166,6 +190,8 @@ services:
       context: .
       dockerfile: Dockerfile
       target: aws-lambdas
+    depends_on:
+      - service-discovery
     networks:
       - local-network
 
@@ -182,6 +208,7 @@ services:
       - ms-wallets
       - ms-transactions
       - ms-notification
+      - service-discovery
     networks:
       - local-network
 

@@ -47,3 +47,10 @@ WORKDIR /app
 COPY --from=builder /app/aws-lambdas/target/aws-lambdas-1.0-SNAPSHOT.jar app.jar
 EXPOSE 8899
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
+#  Runtime service-discovery
+FROM eclipse-temurin:17-jre-jammy AS service-discovery
+WORKDIR /app
+COPY --from=builder /app/service-discovery/target/service-discovery-1.0-SNAPSHOT.jar app.jar
+EXPOSE 8761
+ENTRYPOINT ["java", "-jar", "app.jar"]

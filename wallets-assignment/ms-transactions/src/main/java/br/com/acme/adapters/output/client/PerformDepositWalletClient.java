@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 
-@FeignClient(name = "performDepositWalletClient", url = "${client.url}")
+@FeignClient(name = "MS-WALLET", contextId = "performDepositWalletClient")
 public interface PerformDepositWalletClient {
-    @PostMapping("/perform-deposit")
+    @PostMapping("/api/v1/wallets/perform-deposit")
     void performDeposit(@RequestBody DepositRequest depositRequest);
 }
